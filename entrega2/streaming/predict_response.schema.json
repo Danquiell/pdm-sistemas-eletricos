@@ -1,0 +1,211 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "id_ons": {
+      "type": "string"
+    },
+    "dia": {
+      "type": "string",
+      "format": "date"
+    },
+    "replay_run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "modelo": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "const": "modelo_anomalia_perda"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "vertex_model_resource": {
+          "type": "string",
+          "pattern": "^projects/[^/]+/locations/us-central1/models/[^/]+$"
+        },
+        "serving": {
+          "const": "VERTEX_AI_ENDPOINT_E_BIGQUERY_ML"
+        },
+        "clima_como_feature": {
+          "const": false
+        }
+      },
+      "required": [
+        "nome",
+        "version",
+        "vertex_model_resource",
+        "serving",
+        "clima_como_feature"
+      ],
+      "additionalProperties": false
+    },
+    "predicao": {
+      "type": "object",
+      "properties": {
+        "centroid_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "normalized_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "is_anomaly": {
+          "type": "boolean"
+        },
+        "contamination": {
+          "const": 0.02
+        }
+      },
+      "required": [
+        "centroid_id",
+        "normalized_distance",
+        "is_anomaly",
+        "contamination"
+      ],
+      "additionalProperties": false
+    },
+    "contexto_inmet": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "AGUARDANDO_STREAM",
+            "PARCIAL",
+            "APTO_PARA_CONTEXTO",
+            "SEM_VINCULO"
+          ]
+        },
+        "codigo_estacao": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "distancia_km": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "temperatura_media_c": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "vento_medio_ms": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "radiacao_soma_observada_kj_m2": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "precipitacao_soma_observada_mm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fracao_validas_temperatura": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fracao_validas_vento": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fracao_validas_radiacao_08_16": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fracao_validas_precipitacao": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "regra_completude": {
+          "const": "BRT_08_16_V1"
+        },
+        "usado_no_modelo": {
+          "const": false
+        },
+        "atualizado_em_utc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "status",
+        "codigo_estacao",
+        "distancia_km",
+        "temperatura_media_c",
+        "vento_medio_ms",
+        "radiacao_soma_observada_kj_m2",
+        "precipitacao_soma_observada_mm",
+        "fracao_validas_temperatura",
+        "fracao_validas_vento",
+        "fracao_validas_radiacao_08_16",
+        "fracao_validas_precipitacao",
+        "regra_completude",
+        "usado_no_modelo",
+        "atualizado_em_utc"
+      ],
+      "additionalProperties": false
+    },
+    "respondido_em_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "id_ons",
+    "dia",
+    "replay_run_id",
+    "modelo",
+    "predicao",
+    "contexto_inmet",
+    "respondido_em_utc"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pdm:api:response:1.0.1"
+}

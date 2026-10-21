@@ -1,0 +1,108 @@
+{
+  "contract_version": "1.0.1",
+  "data_revisao": "2026-10-18",
+  "project_id": "pdm-sistema-eletrico-2026",
+  "region_servicos": "us-central1",
+  "bigquery_location": "US",
+  "scope": {
+    "ufs": [
+      "MA",
+      "PI",
+      "CE",
+      "RN",
+      "PB",
+      "PE",
+      "AL",
+      "SE",
+      "BA"
+    ],
+    "energia": "BATCH_EXISTENTE",
+    "meteorologia": "STREAMING_REPLAY_HISTORICO"
+  },
+  "replay": {
+    "dia_local_inicio": "2026-08-01",
+    "dia_local_fim_inclusivo": "2026-08-19",
+    "timezone": "America/Sao_Paulo",
+    "instante_utc_inicio_inclusivo": "2026-08-01T03:00:00Z",
+    "instante_utc_fim_exclusivo": "2026-08-20T04:00:00Z",
+    "margem_final": "Inclui a leitura 2026-08-20T03:00:00Z para fechar os acumulados do dia 19. Valores instantaneos dessa leitura pertencem ao dia 20 e ficam fora da analise.",
+    "eventos_por_segundo": 20,
+    "modo": "LOTE_FINITO_SEM_LOOP_AUTOMATICO",
+    "run_id_exemplo": "demo_20261018_01",
+    "estacoes": "DISTINCT codigo_estacao de usina_estacao_mes em agosto/2026, limitado a ids com linha Gold Nordeste entre 01 e 19/08; nao presumir que todos os 226 historicos estao ativos."
+  },
+  "pubsub": {
+    "topic": "inmet-horario-stream",
+    "subscription": "inmet-horario-processamento",
+    "dedup_attribute": "delivery_id",
+    "atributos": [
+      "event_id",
+      "replay_run_id",
+      "delivery_id",
+      "schema_version",
+      "published_at"
+    ],
+    "event_timestamp_attribute": null,
+    "pipeline_clock": "publish_time; instante_utc permanece tempo historico do negocio"
+  },
+  "pipeline": {
+    "job_name": "inmet-streaming-pdm",
+    "runner": "CLOUD_RUN_PUSH",
+    "sdk": "Python Flask + Google Cloud BigQuery",
+    "storage": "APPEND; views canonicas deduplicam por replay_run_id + event_id",
+    "conflito": "Mesmo run/event_id com medicoes diferentes: excluir da view canonica e registrar DUPLICATE_CONFLICT; nao escolher arbitrariamente.",
+    "cloud_run_service": "pipeline-ons-streaming",
+    "consumer_path": "/inmet/pubsub",
+    "workers": 1,
+    "max_instances": 1
+  },
+  "objects": {
+    "bronze_raw": "sistema_eletrico.inmet_stream_raw",
+    "silver_horario": "sistema_eletrico_silver.inmet_stream_horario",
+    "silver_rejeitados": "sistema_eletrico_silver.inmet_stream_rejeitados",
+    "gold_canonica": "sistema_eletrico_gold.v_inmet_stream_horario",
+    "gold_diaria": "sistema_eletrico_gold.v_inmet_stream_diario",
+    "gold_contexto": "sistema_eletrico_gold.v_energia_inmet_stream_diario",
+    "ons_batch": "sistema_eletrico_gold.perda_diaria_usina",
+    "vinculo_batch": "sistema_eletrico_silver.usina_estacao_mes",
+    "vinculo_congelado": "sistema_eletrico_silver.inmet_replay_vinculos"
+  },
+  "model": {
+    "bigquery_model": "sistema_eletrico_gold.modelo_anomalia_perda",
+    "algorithm": "KMEANS",
+    "num_clusters": 6,
+    "retrain": false,
+    "features": [
+      "tipo_usina",
+      "mwh_gerado",
+      "mwh_perdido",
+      "pct_horas_restricao",
+      "mw_disponibilidade_media",
+      "pct_perda",
+      "fator_capacidade"
+    ],
+    "contamination": 0.02,
+    "vertex_model_id": "pdm-anomalia-perda",
+    "vertex_endpoint_display_name": "pdm-anomalia-perda-endpoint",
+    "gating": "Endpoint Vertex obrigatorio para agrupamento; ML.DETECT_ANOMALIES no BigQuery, mesmo modelo e sete features, para normalized_distance e is_anomaly. Comparar centroide do endpoint e da funcao SQL e versionar o mapeamento se necessario.",
+    "clima_como_feature": false,
+    "serving": "VERTEX_AI_ENDPOINT_E_BIGQUERY_ML"
+  },
+  "api": {
+    "cloud_run_service": "pdm-inferencia-energia",
+    "predict_path": "/v1/predict",
+    "health_path": "/healthz",
+    "authentication": "Cloud Run IAM; cliente envia token de identidade",
+    "input": "Sete features diarias copiadas da Gold existente, sem recalcular ou reescalar; id_ons e dia sao metadados.",
+    "contexto": "LEFT JOIN por id_ons, dia e replay_run_id; contexto incompleto nao impede inferencia valida.",
+    "errors": {
+      "400": "JSON malformado",
+      "401/403": "Autenticacao/autorizacao IAM",
+      "404": "id/dia nao existe no recorte Gold Nordeste",
+      "422": "Schema, datas, features invalidas ou fora do contrato",
+      "503": "Endpoint Vertex, detector BigQuery ou dependencia necessaria indisponivel; sem fallback somente SQL nem resposta simulada."
+    },
+    "schema_version": "1.0.1"
+  },
+  "event_schema_version": "1.0.0"
+}

@@ -1,0 +1,79 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PDM - inferencia diaria de energia",
+    "version": "1.0.1",
+    "description": "Contrato; servico ainda nao implantado. Endpoint autenticado por Cloud Run IAM."
+  },
+  "paths": {
+    "/v1/predict": {
+      "post": {
+        "operationId": "predictDaily",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./predict_request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inferencia real, com contexto meteorologico separado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./predict_response.schema.json"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Entrada invalida"
+          },
+          "503": {
+            "description": "Dependencia ou detector nao pronto"
+          },
+          "400": {
+            "description": "JSON malformado"
+          },
+          "401": {
+            "description": "Sem identidade valida (IAM)"
+          },
+          "403": {
+            "description": "Sem permissao (IAM)"
+          },
+          "404": {
+            "description": "id/dia fora da Gold Nordeste"
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Processo ativo; nao comprova prontidao do modelo"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "iamIdentityToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token de identidade Google aceito pelo Cloud Run IAM."
+      }
+    }
+  },
+  "security": [
+    {
+      "iamIdentityToken": []
+    }
+  ]
+}

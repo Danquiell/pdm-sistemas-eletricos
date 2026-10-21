@@ -1,0 +1,6 @@
+# Testes (pytest tests) e scripts de comparação com o BigQuery.
+# pandas 3 só instala em Python 3.11 ou mais novo; os testes do pytest não usam pandas.
+-r requirements.txt
+pytest==9.1.1
+httpx==0.28.1
+pandas==3.0.6

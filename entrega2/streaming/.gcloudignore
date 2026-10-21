@@ -1,0 +1,13 @@
+.git
+__pycache__
+*.jsonl
+checkpoint_*.json
+*.log
+evidencias
+.venv
+service_antes.yaml
+baseline_recorte_referencia.json
+requests_reais_api.json
+referencia_bigquery_requests.json
+aceite*.json
+*.zip

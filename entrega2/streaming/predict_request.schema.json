@@ -1,0 +1,86 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "id_ons": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "dia": {
+      "type": "string",
+      "format": "date"
+    },
+    "replay_run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "tipo_usina": {
+          "type": "string",
+          "enum": [
+            "EOLIELETRICA",
+            "FOTOVOLTAICA"
+          ]
+        },
+        "mwh_gerado": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mwh_perdido": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pct_horas_restricao": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentual 0-100, copiado da Gold sem reescalar; faixa confirmada no BigQuery em 18/10/2026."
+        },
+        "mw_disponibilidade_media": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pct_perda": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fator_capacidade": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        }
+      },
+      "required": [
+        "tipo_usina",
+        "mwh_gerado",
+        "mwh_perdido",
+        "pct_horas_restricao",
+        "mw_disponibilidade_media",
+        "pct_perda",
+        "fator_capacidade"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "id_ons",
+    "dia",
+    "replay_run_id",
+    "features"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pdm:api:request:1.0.1"
+}

@@ -1,0 +1,128 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "replay_run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "source": {
+      "const": "INMET_AUTOMATICA"
+    },
+    "modo": {
+      "const": "REPLAY_HISTORICO"
+    },
+    "codigo_estacao": {
+      "type": "string",
+      "pattern": "^A[0-9]{3}$"
+    },
+    "instante_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "publicado_em_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "origem": {
+      "type": "object",
+      "properties": {
+        "arquivo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "sha256_arquivo": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "linha": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "estagio": {
+          "type": "string",
+          "enum": [
+            "CSV_ORIGINAL",
+            "SILVER_HISTORICA"
+          ]
+        }
+      },
+      "required": [
+        "arquivo",
+        "sha256_arquivo",
+        "linha",
+        "estagio"
+      ],
+      "additionalProperties": false
+    },
+    "medicoes": {
+      "type": "object",
+      "properties": {
+        "temperatura_c": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 48,
+          "description": "Texto numérico original, com ponto/vírgula decimal, sentinela ou nulo. O consumidor limpa e tipa."
+        },
+        "vento_velocidade_ms": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 48,
+          "description": "Texto numérico original, com ponto/vírgula decimal, sentinela ou nulo. O consumidor limpa e tipa."
+        },
+        "radiacao_global_kj_m2": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 48,
+          "description": "Texto numérico original, com ponto/vírgula decimal, sentinela ou nulo. O consumidor limpa e tipa."
+        },
+        "precipitacao_mm": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 48,
+          "description": "Texto numérico original, com ponto/vírgula decimal, sentinela ou nulo. O consumidor limpa e tipa."
+        }
+      },
+      "required": [
+        "temperatura_c",
+        "vento_velocidade_ms",
+        "radiacao_global_kj_m2",
+        "precipitacao_mm"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "replay_run_id",
+    "source",
+    "modo",
+    "codigo_estacao",
+    "instante_utc",
+    "publicado_em_utc",
+    "origem",
+    "medicoes"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pdm:inmet:evento:1.0.0",
+  "title": "Evento horario INMET bruto - contrato 1.0.0"
+}

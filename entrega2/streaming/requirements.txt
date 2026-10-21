@@ -1,0 +1,5 @@
+Flask>=3.0,<4
+gunicorn>=22,<24
+google-cloud-bigquery>=3.25,<4
+google-cloud-pubsub>=2.23,<3
+jsonschema>=4.22,<5

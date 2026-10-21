@@ -1,0 +1,4 @@
+# API (o que a imagem do Cloud Run precisa). Testado com Python 3.12.
+fastapi==0.155.0
+uvicorn==0.54.0
+pydantic==2.14.1

@@ -1,0 +1,145 @@
+{
+  "modelo": "modelo_anomalia_perda",
+  "origem": "pdm-sistema-eletrico-2026.sistema_eletrico_gold.modelo_anomalia_perda",
+  "tipo": "KMEANS",
+  "contamination": 0.02,
+  "exportado_em_utc": "2026-10-20T17:03:57+00:00",
+  "features_numericas": [
+    "mwh_gerado",
+    "mwh_perdido",
+    "pct_perda",
+    "pct_horas_restricao",
+    "fator_capacidade",
+    "mw_disponibilidade_media"
+  ],
+  "categorias_tipo_usina": [
+    "EOLIELETRICA",
+    "FOTOVOLTAICA"
+  ],
+  "padronizacao": {
+    "mwh_gerado": {
+      "media": 1705.5145218344296,
+      "desvio": 1914.7681764998665
+    },
+    "mwh_perdido": {
+      "media": 302.08345201575776,
+      "desvio": 656.9702905881242
+    },
+    "pct_perda": {
+      "media": 14.255483700208636,
+      "desvio": 20.399892539048494
+    },
+    "pct_horas_restricao": {
+      "media": 28.52928389419512,
+      "desvio": 27.784129118622428
+    },
+    "fator_capacidade": {
+      "media": 0.39594457523001636,
+      "desvio": 0.27681571151170564
+    },
+    "mw_disponibilidade_media": {
+      "media": 175.44753250368782,
+      "desvio": 164.35366034142902
+    }
+  },
+  "centroides": {
+    "1": {
+      "numericas": {
+        "mwh_gerado": -0.43532686641399715,
+        "mwh_perdido": 0.20864227119426587,
+        "pct_perda": 1.1026958423116535,
+        "pct_horas_restricao": 0.934145431521297,
+        "fator_capacidade": -0.2937656337171883,
+        "mw_disponibilidade_media": -0.3831083793568423
+      },
+      "tipo_usina": {
+        "FOTOVOLTAICA": 0.2902073379213606,
+        "EOLIELETRICA": 0.7097926620786393
+      }
+    },
+    "2": {
+      "numericas": {
+        "mwh_gerado": 0.8429710316984369,
+        "mwh_perdido": -0.192598998884681,
+        "pct_perda": -0.45559761262401377,
+        "pct_horas_restricao": -0.4273378145385928,
+        "fator_capacidade": -0.19029582869563877,
+        "mw_disponibilidade_media": 1.5578774760533152
+      },
+      "tipo_usina": {
+        "EOLIELETRICA": 0.6089185644449744,
+        "FOTOVOLTAICA": 0.3910814355550256
+      }
+    },
+    "3": {
+      "numericas": {
+        "mwh_gerado": 3.082615057388693,
+        "mwh_perdido": 0.5567727293457653,
+        "pct_perda": -0.3130457257600284,
+        "pct_horas_restricao": 0.41353050688258025,
+        "fator_capacidade": 0.9254696685664503,
+        "mw_disponibilidade_media": 2.0625360440228624
+      },
+      "tipo_usina": {
+        "EOLIELETRICA": 0.9357538976666318,
+        "FOTOVOLTAICA": 0.06424610233336821
+      }
+    },
+    "4": {
+      "numericas": {
+        "mwh_gerado": 0.35869078480394784,
+        "mwh_perdido": 3.324587953094739,
+        "pct_perda": 2.0103186405381868,
+        "pct_horas_restricao": 1.3899712183906343,
+        "fator_capacidade": -0.41312692166192544,
+        "mw_disponibilidade_media": 1.134581436470911
+      },
+      "tipo_usina": {
+        "FOTOVOLTAICA": 0.3508997429305913,
+        "EOLIELETRICA": 0.6491002570694088
+      }
+    },
+    "5": {
+      "numericas": {
+        "mwh_gerado": 0.15622347846703494,
+        "mwh_perdido": -0.315684698398601,
+        "pct_perda": -0.4917901231777874,
+        "pct_horas_restricao": -0.13536043156381675,
+        "fator_capacidade": 1.2888033102868466,
+        "mw_disponibilidade_media": -0.3218367074315179
+      },
+      "tipo_usina": {
+        "EOLIELETRICA": 0.8621421897562218,
+        "FOTOVOLTAICA": 0.13785781024377813
+      }
+    },
+    "6": {
+      "numericas": {
+        "mwh_gerado": -0.48498428209529176,
+        "mwh_perdido": -0.4337702649903751,
+        "pct_perda": -0.5928075212106327,
+        "pct_horas_restricao": -0.6979407470984811,
+        "fator_capacidade": -0.5136009558219962,
+        "mw_disponibilidade_media": -0.40068096114291557
+      },
+      "tipo_usina": {
+        "EOLIELETRICA": 0.7496136708025145,
+        "FOTOVOLTAICA": 0.2503863291974855
+      }
+    }
+  },
+  "raio_grupo": {
+    "1": 1.6716161685019297,
+    "2": 1.633697692568523,
+    "3": 2.374020291170367,
+    "4": 3.10749779409843,
+    "5": 1.673743827226818,
+    "6": 1.1452182122767391
+  },
+  "limiar": {
+    "menor_distancia_anomala_treino": 1.6521077135253008,
+    "maior_distancia_normal_treino": 1.6520148554465148,
+    "anomalas_treino": 3652,
+    "dias_treino": 182487
+  }
+}

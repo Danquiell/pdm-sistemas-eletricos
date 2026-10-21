@@ -1,0 +1,522 @@
+[
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-17",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 5214.041,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6524587245835098,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-11",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 13.723,
+      "mwh_perdido": 1179.778,
+      "pct_perda": 98.85,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0014,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.1518040411355663,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-18",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 6556.053,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 2.2179695109601774,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-13",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 2607.104,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 0.9740735032970294,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-12",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 2621.745,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 0.9745356734466528,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-15",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 10515.031,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 4.051128870485538,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-14",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 4474.438,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.3761348265062965,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-10",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 4349.362,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.3334805025935683,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-19",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 1762.224,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.03493265919807,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "santa_vitoria_ago26",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-16",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 11575.616,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 4.557155165175484,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "mais_distantes",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-16",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 11575.616,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 4.557155165175484,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "mais_distantes",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-15",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 10515.031,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 4.051128870485538,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "mais_distantes",
+    "id_ons": "CJU_RNCAJ1",
+    "dia": "2026-08-17",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 2341.861,
+      "mwh_perdido": 10108.501,
+      "pct_perda": 81.19,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.1423,
+      "mw_disponibilidade_media": 685.8
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 3.8348004068192583,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "logo_acima_do_limiar",
+    "id_ons": "CJU_RSSVPA",
+    "dia": "2026-08-17",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 5214.041,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 100.0,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 408.33
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6524587245835098,
+      "is_anomaly": true,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "logo_acima_do_limiar",
+    "id_ons": "CJU_BASAR",
+    "dia": "2026-05-07",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 14059.269,
+      "mwh_perdido": 1118.982,
+      "pct_perda": 7.372,
+      "pct_horas_restricao": 50.0,
+      "fator_capacidade": 0.7173,
+      "mw_disponibilidade_media": 816.628
+    },
+    "esperado": {
+      "centroid_id": 3,
+      "normalized_distance": 1.652861443999093,
+      "is_anomaly": true,
+      "grupo_ml_predict": 3
+    }
+  },
+  {
+    "motivo": "logo_acima_do_limiar",
+    "id_ons": "CJU_BASAR",
+    "dia": "2026-05-22",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 9786.955,
+      "mwh_perdido": 2901.346,
+      "pct_perda": 22.866,
+      "pct_horas_restricao": 60.42,
+      "fator_capacidade": 0.4999,
+      "mw_disponibilidade_media": 815.681
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6529899571734634,
+      "is_anomaly": true,
+      "grupo_ml_predict": 3
+    }
+  },
+  {
+    "motivo": "logo_abaixo_do_limiar",
+    "id_ons": "CJU_RNCAJ1",
+    "dia": "2026-07-02",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 3859.175,
+      "mwh_perdido": 5470.875,
+      "pct_perda": 58.637,
+      "pct_horas_restricao": 95.83,
+      "fator_capacidade": 0.2365,
+      "mw_disponibilidade_media": 679.918
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6514240443517076,
+      "is_anomaly": false,
+      "grupo_ml_predict": 4
+    }
+  },
+  {
+    "motivo": "logo_abaixo_do_limiar",
+    "id_ons": "CJU_CECHE",
+    "dia": "2026-05-11",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 2.755,
+      "mwh_perdido": 85.175,
+      "pct_perda": 96.867,
+      "pct_horas_restricao": 33.33,
+      "fator_capacidade": 0.0107,
+      "mw_disponibilidade_media": 10.728
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6510900752045363,
+      "is_anomaly": false,
+      "grupo_ml_predict": 1
+    }
+  },
+  {
+    "motivo": "logo_abaixo_do_limiar",
+    "id_ons": "CJU_CEPPG",
+    "dia": "2026-04-12",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 3.346,
+      "mwh_perdido": 53.488,
+      "pct_perda": 94.113,
+      "pct_horas_restricao": 31.25,
+      "fator_capacidade": 0.0465,
+      "mw_disponibilidade_media": 2.997
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.6503504943840304,
+      "is_anomaly": false,
+      "grupo_ml_predict": 1
+    }
+  },
+  {
+    "motivo": "grupo_detect_difere_do_predict",
+    "id_ons": "CJU_BASDB",
+    "dia": "2026-03-15",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 457.013,
+      "mwh_perdido": 48.413,
+      "pct_perda": 9.579,
+      "pct_horas_restricao": 20.83,
+      "fator_capacidade": 0.0514,
+      "mw_disponibilidade_media": 370.479
+    },
+    "esperado": {
+      "centroid_id": 2,
+      "normalized_distance": 1.2090821150674005,
+      "is_anomaly": false,
+      "grupo_ml_predict": 6
+    }
+  },
+  {
+    "motivo": "grupo_detect_difere_do_predict",
+    "id_ons": "CJU_RSQ138",
+    "dia": "2026-03-15",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 211.957,
+      "mwh_perdido": 70.052,
+      "pct_perda": 24.84,
+      "pct_horas_restricao": 22.92,
+      "fator_capacidade": 0.2384,
+      "mw_disponibilidade_media": 37.037
+    },
+    "esperado": {
+      "centroid_id": 1,
+      "normalized_distance": 0.9498189618922572,
+      "is_anomaly": false,
+      "grupo_ml_predict": 6
+    }
+  },
+  {
+    "motivo": "grupo_detect_difere_do_predict",
+    "id_ons": "CJU_PEPAR",
+    "dia": "2026-03-04",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 2151.733,
+      "mwh_perdido": 130.337,
+      "pct_perda": 5.711,
+      "pct_horas_restricao": 27.08,
+      "fator_capacidade": 0.3952,
+      "mw_disponibilidade_media": 226.845
+    },
+    "esperado": {
+      "centroid_id": 5,
+      "normalized_distance": 0.8719111917840893,
+      "is_anomaly": false,
+      "grupo_ml_predict": 6
+    }
+  },
+  {
+    "motivo": "fotovoltaica_anomala",
+    "id_ons": "PISDP1",
+    "dia": "2026-04-25",
+    "features": {
+      "tipo_usina": "FOTOVOLTAICA",
+      "mwh_gerado": 0.0,
+      "mwh_perdido": 4.154,
+      "pct_perda": 100.0,
+      "pct_horas_restricao": 47.92,
+      "fator_capacidade": 0.0,
+      "mw_disponibilidade_media": 27.305
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 1.676617729059024,
+      "is_anomaly": true,
+      "grupo_ml_predict": 1
+    }
+  },
+  {
+    "motivo": "fotovoltaica_anomala",
+    "id_ons": "CJU_MGARN",
+    "dia": "2026-06-13",
+    "features": {
+      "tipo_usina": "FOTOVOLTAICA",
+      "mwh_gerado": 2896.133,
+      "mwh_perdido": 0.0,
+      "pct_perda": 0.0,
+      "pct_horas_restricao": 0.0,
+      "fator_capacidade": 0.146,
+      "mw_disponibilidade_media": 826.358
+    },
+    "esperado": {
+      "centroid_id": 2,
+      "normalized_distance": 1.6830741253981751,
+      "is_anomaly": true,
+      "grupo_ml_predict": 2
+    }
+  },
+  {
+    "motivo": "fator_acima_de_1",
+    "id_ons": "CJU_BABBC",
+    "dia": "2026-06-15",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 8523.99,
+      "mwh_perdido": 0.0,
+      "pct_perda": 0.0,
+      "pct_horas_restricao": 0.0,
+      "fator_capacidade": 2.0,
+      "mw_disponibilidade_media": 121.5
+    },
+    "esperado": {
+      "centroid_id": 3,
+      "normalized_distance": 2.416785360012233,
+      "is_anomaly": true,
+      "grupo_ml_predict": 5
+    }
+  },
+  {
+    "motivo": "fator_acima_de_1",
+    "id_ons": "CJU_RNCAJ1",
+    "dia": "2026-05-04",
+    "features": {
+      "tipo_usina": "EOLIELETRICA",
+      "mwh_gerado": 3824.81,
+      "mwh_perdido": 315.768,
+      "pct_perda": 7.626,
+      "pct_horas_restricao": 58.33,
+      "fator_capacidade": 2.0,
+      "mw_disponibilidade_media": 61.9
+    },
+    "esperado": {
+      "centroid_id": 4,
+      "normalized_distance": 2.474827742261792,
+      "is_anomaly": true,
+      "grupo_ml_predict": 5
+    }
+  }
+]
