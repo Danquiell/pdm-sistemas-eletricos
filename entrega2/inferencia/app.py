@@ -99,7 +99,7 @@ async def limita_corpo(request: Request, call_next):
     return await call_next(request)
 
 
-# No Cloud Run, endereços que terminam em "z" são reservados; lá vale /health.
+# No Cloud Run o /healthz na raiz é reservado e não chega na API; lá vale /health.
 @app.get("/health")
 @app.get("/healthz")
 def healthz():

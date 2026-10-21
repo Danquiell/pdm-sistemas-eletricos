@@ -110,6 +110,7 @@ Para os dias de treino, trocar `WHERE is_teste` por `WHERE NOT is_teste` na cons
 | Regra contra o BigQuery, 182.487 dias de treino | 182.487 iguais |
 | Os 222.309 dias (teste e treino) pela API | todas as respostas 200 e iguais ao BigQuery |
 | `pytest tests` | 61 passaram, no computador e no Cloud Shell |
+| Os 39.822 dias de teste pela API publicada no Cloud Run (`api-anomalia-perda`) | todas as respostas iguais ao BigQuery (21/10/2026) |
 | Código estragado de propósito (limiar 1% mais alto; sem dividir pelo raio) | 5 e 27 testes falharam, ou seja, os testes pegam o erro |
 
 ## Limites
@@ -128,7 +129,7 @@ Para os dias de treino, trocar `WHERE is_teste` por `WHERE NOT is_teste` na cons
 - Testar o serviço publicado (26 dias reais e 4 entradas erradas):
   `TOKEN=$(gcloud auth print-identity-token) python testar_servico.py URL_DO_SERVICO`.
   Resultado esperado: `RESULTADO: tudo certo`.
-- No Cloud Run, endereços que terminam em "z" são reservados: use `/health`, não `/healthz`.
+- No Cloud Run o `/healthz` na raiz é reservado e não chega na API: use `/health`.
 - Para o Vertex AI Model Registry, o arquivo a registrar é o `modelo_anomalia_perda.json`.
   Um endpoint Vertex com o modelo do `EXPORT MODEL` devolve o grupo do `ML.PREDICT` e não
   diz se o dia é anômalo.
