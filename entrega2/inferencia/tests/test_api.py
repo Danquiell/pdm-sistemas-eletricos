@@ -185,7 +185,7 @@ def test_artefato_ausente_nao_derruba_o_processo(tmp_path):
     import subprocess
     import sys
     pasta = pathlib.Path(api.__file__).parent
-    for nome in ("app.py", "detector.py"):
+    for nome in ("app.py", "detector.py", "contexto.py"):
         shutil.copy(pasta / nome, tmp_path / nome)
     codigo = ("from fastapi.testclient import TestClient; import app; c = TestClient(app.app); "
               "print(c.post('/predict', json={}).status_code, "

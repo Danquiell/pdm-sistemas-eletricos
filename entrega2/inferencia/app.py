@@ -1,13 +1,19 @@
 """API que diz se um dia de uma usina é anômalo.
 
 POST /predict (ou /v1/predict) recebe os 7 números do dia, como estão na Gold
-perda_diaria_usina, e devolve o grupo, a distância e se o dia é anômalo.
+perda_diaria_usina, e devolve o grupo, a distância e se o dia é anômalo. Quando o pedido
+traz id_ons e dia, a resposta leva também o clima do dia (contexto_inmet), lido da view
+v_energia_inmet_stream_diario. O clima não muda a previsão.
+
+O formato segue o contrato entrega2/streaming/predict_response.schema.json (versão 1.1.0).
 
 Códigos: 200 ok; 400 corpo não é JSON; 413 corpo grande demais;
 422 dado errado; 503 arquivo do modelo não carregou.
 """
 import datetime as dt
 import logging
+import os
+import uuid
 from typing import Literal, Optional
 
 from fastapi import FastAPI, Request
@@ -15,9 +21,17 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from contexto import ContextoInmet
 from detector import Detector
 
-SCHEMA_VERSION = "1.0.1"
+SCHEMA_VERSION = "1.1.0"
+# execução oficial do replay do clima, usada quando o pedido não diz qual
+RUN_OFICIAL = os.environ.get("RUN_OFICIAL", "demo_20261018_01")
+# versão do modelo no Vertex AI Model Registry (só registro; a conta é feita aqui)
+VERTEX_MODEL = os.environ.get(
+    "VERTEX_MODEL_RESOURCE",
+    "projects/1072081353503/locations/us-central1/models/pdm-anomalia-perda")
+SERVING = "CLOUD_RUN_ARTEFATO_BQML"
 # Diferença máxima aceita entre pct_perda e o valor calculado pelas energias.
 # Na Gold a maior diferença é 0,0005; com 0,005 também pega percentual mandado de 0 a 1.
 TOLERANCIA_PCT_PERDA = 0.005
@@ -27,7 +41,7 @@ MAX_MWH_DIA = MAX_MW * 24
 MAX_CORPO_BYTES = 16_384
 
 logging.basicConfig(level=logging.INFO)
-app = FastAPI(title="pdm-inferencia-energia", version=SCHEMA_VERSION)
+app = FastAPI(title="api-anomalia-perda", version=SCHEMA_VERSION)
 
 # Se o arquivo do modelo faltar, a API sobe mesmo assim e responde 503.
 try:
@@ -35,6 +49,8 @@ try:
 except Exception:
     logging.exception("ARTEFATO_DO_MODELO_NAO_CARREGOU")
     detector = None
+
+contexto = ContextoInmet()
 
 
 def numero(maximo):
@@ -66,8 +82,8 @@ class Features(BaseModel):
 class PredictRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     # opcionais: só voltam na resposta para identificar o pedido
-    schema_version: Optional[Literal["1.0.1"]] = None
-    request_id: Optional[str] = Field(default=None, min_length=1, max_length=64)
+    schema_version: Optional[Literal["1.0.1", "1.1.0"]] = None
+    request_id: Optional[uuid.UUID] = None
     id_ons: Optional[str] = Field(default=None, min_length=1, max_length=80)
     dia: Optional[str] = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")
     replay_run_id: Optional[str] = Field(default=None, pattern=r"^[a-z0-9][a-z0-9_-]{2,63}$")
@@ -104,7 +120,8 @@ async def limita_corpo(request: Request, call_next):
 @app.get("/healthz")
 def healthz():
     return {"status": "ok" if detector else "sem_modelo", "modelo_carregado": detector is not None,
-            "versao_modelo": detector.versao if detector else None}
+            "versao_modelo": detector.versao if detector else None,
+            "limiar": detector.limiar if detector else None}
 
 
 @app.post("/predict")
@@ -113,24 +130,27 @@ def predict(req: PredictRequest):
     if detector is None:
         return JSONResponse(status_code=503, content={"erro": "MODELO_INDISPONIVEL"})
     r = detector.avaliar(req.features.model_dump())
+    # sem id_ons e dia não há como achar o clima; a execução padrão é a oficial
+    execucao = req.replay_run_id or (RUN_OFICIAL if req.id_ons and req.dia else None)
     return {
         "schema_version": SCHEMA_VERSION,
-        "request_id": req.request_id,
+        "request_id": str(req.request_id or uuid.uuid4()),
         "id_ons": req.id_ons,
         "dia": req.dia,
-        "replay_run_id": req.replay_run_id,
+        "replay_run_id": execucao,
         "modelo": {
             "nome": "modelo_anomalia_perda",
-            "versao": detector.versao,
-            "regra": "ML.DETECT_ANOMALIES K-Means, distancia/raio do grupo >= limiar do treino",
+            "version": detector.versao,
+            "vertex_model_resource": VERTEX_MODEL,
+            "serving": SERVING,
             "clima_como_feature": False,
         },
         "predicao": {
             "centroid_id": r["centroid_id"],
             "normalized_distance": round(r["normalized_distance"], 6),
             "is_anomaly": r["is_anomaly"],
-            "limiar": r["limiar"],
             "contamination": detector.contamination,
         },
+        "contexto_inmet": contexto.buscar(req.id_ons, req.dia, execucao),
         "respondido_em_utc": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
     }

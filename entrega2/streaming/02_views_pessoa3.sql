@@ -36,7 +36,11 @@ WHERE dia BETWEEN '2026-08-01' AND '2026-08-19';
 
 CREATE OR REPLACE VIEW `pdm-sistema-eletrico-2026.sistema_eletrico_gold.v_energia_inmet_stream_diario` AS
 WITH runs AS (
+ -- As execucoes validacao_* sao testes do validar_pipeline.py (poucas leituras de proposito).
+ -- Sem este filtro cada uma repete as 3.705 linhas de energia e um SUM sem filtro de execucao
+ -- sai 5 vezes maior que a Gold.
  SELECT DISTINCT replay_run_id FROM `pdm-sistema-eletrico-2026.sistema_eletrico_silver.inmet_stream_horario`
+ WHERE replay_run_id NOT LIKE 'validacao%'
 ), energia AS (
  SELECT * FROM `pdm-sistema-eletrico-2026.sistema_eletrico_gold.perda_diaria_usina`
  WHERE dia BETWEEN '2026-08-01' AND '2026-08-19'

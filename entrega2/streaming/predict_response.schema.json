@@ -2,22 +2,32 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0.1"
+      "const": "1.1.0"
     },
     "request_id": {
       "type": "string",
       "format": "uuid"
     },
     "id_ons": {
-      "type": "string"
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "dia": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "date"
     },
     "replay_run_id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "description": "Execução do replay usada para buscar o clima. Sem id_ons e dia, vem nulo; sem replay_run_id no pedido, a API usa a execução oficial."
     },
     "modelo": {
       "type": "object",
@@ -27,14 +37,16 @@
         },
         "version": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Instante em que o modelo foi exportado do BigQuery ML."
         },
         "vertex_model_resource": {
           "type": "string",
           "pattern": "^projects/[^/]+/locations/us-central1/models/[^/]+$"
         },
         "serving": {
-          "const": "VERTEX_AI_ENDPOINT_E_BIGQUERY_ML"
+          "const": "CLOUD_RUN_ARTEFATO_BQML",
+          "description": "A API no Cloud Run aplica o modelo do BigQuery ML a partir dos parâmetros exportados (modelo_anomalia_perda.json). O Vertex AI guarda o registro e a versão do modelo."
         },
         "clima_como_feature": {
           "const": false
@@ -85,8 +97,12 @@
             "AGUARDANDO_STREAM",
             "PARCIAL",
             "APTO_PARA_CONTEXTO",
-            "SEM_VINCULO"
-          ]
+            "SEM_VINCULO",
+            "SEM_IDENTIFICACAO",
+            "FORA_DO_RECORTE",
+            "INDISPONIVEL"
+          ],
+          "description": "Os quatro primeiros vêm da view v_energia_inmet_stream_diario. SEM_IDENTIFICACAO: pedido sem id_ons ou dia. FORA_DO_RECORTE: usina ou dia fora do Nordeste de 1 a 19/08/2026. INDISPONIVEL: o BigQuery não respondeu; a previsão vale do mesmo jeito."
         },
         "codigo_estacao": {
           "type": [
@@ -207,5 +223,5 @@
   ],
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:pdm:api:response:1.0.1"
+  "$id": "urn:pdm:api:response:1.1.0"
 }

@@ -2,3 +2,5 @@
 fastapi==0.155.0
 uvicorn==0.54.0
 pydantic==2.14.1
+# leitura do clima do dia na view v_energia_inmet_stream_diario
+google-cloud-bigquery==3.46.1

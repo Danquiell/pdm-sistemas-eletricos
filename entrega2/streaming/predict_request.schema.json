@@ -2,7 +2,10 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0.1"
+      "enum": [
+        "1.0.1",
+        "1.1.0"
+      ]
     },
     "request_id": {
       "type": "string",
@@ -11,7 +14,8 @@
     "id_ons": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 80
+      "maxLength": 80,
+      "description": "Opcional. Com dia, permite buscar o clima do dia."
     },
     "dia": {
       "type": "string",
@@ -19,7 +23,8 @@
     },
     "replay_run_id": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$",
+      "description": "Opcional. Sem ele, a API usa a execução oficial demo_20261018_01."
     },
     "features": {
       "type": "object",
@@ -33,11 +38,13 @@
         },
         "mwh_gerado": {
           "type": "number",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 240000
         },
         "mwh_perdido": {
           "type": "number",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 240000
         },
         "pct_horas_restricao": {
           "type": "number",
@@ -47,12 +54,14 @@
         },
         "mw_disponibilidade_media": {
           "type": "number",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 10000
         },
         "pct_perda": {
           "type": "number",
           "minimum": 0,
-          "maximum": 100
+          "maximum": 100,
+          "description": "Percentual 0-100. A API recusa (422) quando difere em mais de 0,005 de 100*mwh_perdido/(mwh_perdido+mwh_gerado)."
         },
         "fator_capacidade": {
           "type": "number",
@@ -73,14 +82,9 @@
     }
   },
   "required": [
-    "schema_version",
-    "request_id",
-    "id_ons",
-    "dia",
-    "replay_run_id",
     "features"
   ],
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:pdm:api:request:1.0.1"
+  "$id": "urn:pdm:api:request:1.1.0"
 }

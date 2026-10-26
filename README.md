@@ -1,7 +1,17 @@
 # Detector de perda por restrição de geração — dados do ONS
 
+Repositório: https://github.com/Danquiell/pdm-sistemas-eletricos
+
 Pipeline Medallion no BigQuery e detecção de anomalia com BigQuery ML, sobre os dados
 abertos de restrição de geração (constrained-off) de usinas eólicas e fotovoltaicas.
+
+O repositório tem duas entregas:
+
+- **Entrega 1** (raiz e `sql/`): carga em lote dos dados do ONS, camadas Bronze, Silver e
+  Gold, e o modelo que marca os dias anômalos de perda.
+- **Entrega 2** (`entrega2/`): o clima do INMET chegando em streaming, a junção do clima com
+  a energia de cada usina e uma API no Cloud Run que responde se um dia é anômalo e devolve o
+  clima daquele dia. Ver a seção [Entrega 2](#entrega-2) no fim.
 
 Projeto GCP: `pdm-sistema-eletrico-2026`
 Bucket: `gs://dados-ons/bronze/restricao_coff/` — 64 arquivos Parquet, 138 MB
@@ -62,3 +72,59 @@ perdida. Perda média de 2.688 MWh contra 421 MWh nos dias normais.
 2. Não é o indicador oficial de constrained-off do ONS, que usa a referência final e regras
    próprias de apuração. É a energia não gerada em relação à referência, com a fórmula acima.
 3. Não é previsão. O modelo classifica dias que já aconteceram.
+
+## Entrega 2
+
+### O que muda na arquitetura
+
+Na entrega 1 tudo era lote: os Parquet do ONS entravam no BigQuery, viravam Bronze, Silver e
+Gold, e o modelo rodava em cima da Gold. Para saber se um dia era anômalo, alguém precisava
+abrir o BigQuery e rodar o `ML.DETECT_ANOMALIES`.
+
+A entrega 2 acrescenta duas coisas em volta desse núcleo, sem mexer nele:
+
+```
+ENTREGA 1 (lote, sem mudança)                ENTREGA 2
+                                             INMET (replay de 01 a 19/08/2026)
+Parquet ONS -> Bronze -> Silver -> Gold         -> Pub/Sub -> Cloud Run -> BigQuery
+                                  |                                         |
+                                  |            clima por usina e dia <-------+
+                                  v                    |
+                 modelo K-Means (BigQuery ML)          |
+                                  |                    |
+           parâmetros exportados (JSON)                |
+                                  v                    v
+                         API no Cloud Run  <--  view clima + energia
+                                  |
+            resposta: grupo, distância, is_anomaly e clima do dia
+
+Vertex AI Model Registry: guarda o registro e a versão do modelo (pdm-anomalia-perda, v1).
+```
+
+1. **Streaming do clima** (`entrega2/streaming`). Um produtor publica as leituras horárias do
+   INMET no Pub/Sub, um serviço no Cloud Run limpa cada leitura e grava no BigQuery, e uma view
+   junta o clima da estação mais próxima com a perda de cada usina do Nordeste, por dia.
+2. **API de anomalias** (`entrega2/inferencia`). O modelo do BigQuery ML foi exportado para
+   um arquivo JSON (médias, centros, raios e limiar) e a API aplica a mesma conta. Ela responde
+   em menos de meio segundo com a instância já ligada (o primeiro pedido depois de um tempo
+   parado leva alguns segundos a mais), não deixa máquina ligada cobrando, e a resposta é
+   igual à do BigQuery nos 222.309 dias da Gold.
+
+O clima não entra no modelo. Ele vai junto com a resposta para ajudar a explicar o dia: uma
+perda alta com vento forte e uma perda alta com vento fraco contam histórias diferentes.
+
+### No ar
+
+| O quê | Onde |
+|---|---|
+| API de anomalias | https://api-anomalia-perda-ag2ve5rgla-uc.a.run.app (`/v1/predict`, `/predict`, `/health`, `/docs`) |
+| Serviço do streaming | Cloud Run `pipeline-ons-streaming` |
+| Clima + energia | BigQuery `sistema_eletrico_gold.v_energia_inmet_stream_diario` |
+| Modelo registrado | Vertex AI Model Registry, `pdm-anomalia-perda`, versão 1 |
+
+Os dois serviços do Cloud Run ficam com zero instâncias quando ninguém usa. O endpoint do
+Vertex (`pdm-anomalia-perda-endpoint`) existe, mas fica sem modelo implantado porque a máquina
+cobra por hora; quando ligado, ele devolve só o grupo mais próximo e não diz se o dia é anômalo.
+
+Como montar e testar cada parte: `entrega2/streaming/README.md` e `entrega2/inferencia/README.md`.
+

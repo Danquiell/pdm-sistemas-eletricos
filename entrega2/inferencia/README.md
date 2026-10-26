@@ -1,7 +1,12 @@
 # API de anomalias de perda (Pessoa 4)
 
 API que recebe os números de um dia de uma usina e diz se aquele dia é anômalo, com a mesma
-resposta do modelo `sistema_eletrico_gold.modelo_anomalia_perda` no BigQuery.
+resposta do modelo `sistema_eletrico_gold.modelo_anomalia_perda` no BigQuery. Quando o pedido
+traz `id_ons` e `dia`, a resposta leva também o clima daquele dia, lido da view de clima +
+energia do streaming (`entrega2/streaming`).
+
+No ar: https://api-anomalia-perda-ag2ve5rgla-uc.a.run.app (Cloud Run, acesso público).
+A resposta segue o contrato `entrega2/streaming/predict_response.schema.json`, versão 1.1.0.
 
 ## Arquivos
 
@@ -9,12 +14,13 @@ resposta do modelo `sistema_eletrico_gold.modelo_anomalia_perda` no BigQuery.
 |---|---|
 | `app.py` | A API: recebe o pedido, confere os dados e responde |
 | `detector.py` | A regra que acha o grupo do dia e diz se ele é anômalo |
+| `contexto.py` | Busca o clima do dia na view `v_energia_inmet_stream_diario` |
 | `modelo_anomalia_perda.json` | O modelo copiado do BigQuery (médias, centros, raios e limiar) |
 | `requirements.txt` | Bibliotecas da API |
 | `requirements-teste.txt` | Bibliotecas dos testes e das comparações |
-| `tests/` | 61 testes automáticos |
+| `tests/` | 75 testes automáticos (`conftest.py` troca o BigQuery por uma linha real em memória) |
 | `Dockerfile` | Receita da imagem da API para o Cloud Run |
-| `testar_servico.py` | Testa a API já publicada |
+| `testar_servico.py` | Testa a API já publicada, inclusive o clima de um dia do Nordeste |
 | `testar_vertex.py` | Testa o endpoint do Vertex AI |
 | `consulta_gabarito.sql` | Consulta que baixa a resposta do BigQuery para os dias de teste |
 | `comparar_com_bigquery.py` | Compara a regra com o BigQuery, dia por dia |
@@ -70,7 +76,33 @@ Exemplo (Santa Vitória do Palmar, 16/08/2026, linha real da Gold):
 Resposta esperada: `centroid_id` 4, `normalized_distance` 4.557155, `is_anomaly` true.
 
 Os campos `schema_version`, `request_id`, `id_ons`, `dia` e `replay_run_id` são opcionais
-e voltam na resposta.
+e voltam na resposta. Sem `request_id`, a API gera um. Sem `replay_run_id`, o clima vem da
+execução oficial do replay, `demo_20261018_01`.
+
+## O clima do dia (`contexto_inmet`)
+
+O clima não entra no modelo e não muda a previsão. Ele serve para explicar o dia. Exemplo:
+CONJ. CAJU (RN), 17/08/2026, 10.108,5 MWh perdidos, marcado como anômalo:
+
+```json
+"contexto_inmet": {"status": "APTO_PARA_CONTEXTO", "codigo_estacao": "A372",
+  "distancia_km": 68.87, "temperatura_media_c": 28.0, "vento_medio_ms": 2.95,
+  "radiacao_soma_observada_kj_m2": 17638.9, "precipitacao_soma_observada_mm": 0.0, ...}
+```
+
+| `status` | Quando |
+|---|---|
+| `APTO_PARA_CONTEXTO` | clima do dia com pelo menos 80% das horas válidas |
+| `PARCIAL` | clima do dia com menos de 80% das horas válidas |
+| `SEM_VINCULO` | a usina não tem estação do INMET ligada a ela |
+| `AGUARDANDO_STREAM` | o clima do dia ainda não chegou |
+| `SEM_IDENTIFICACAO` | o pedido não trouxe `id_ons` e `dia` |
+| `FORA_DO_RECORTE` | usina fora do Nordeste ou dia fora de 01 a 19/08/2026 |
+| `INDISPONIVEL` | o BigQuery não respondeu; a previsão sai do mesmo jeito |
+
+Na primeira consulta de uma execução, a API baixa as 3.705 linhas dela e guarda na memória por
+10 minutos. Os pedidos seguintes não vão ao BigQuery. Se o BigQuery falhar, a API espera 30 s
+antes de tentar de novo.
 
 | Código | Quando |
 |---|---|
@@ -87,7 +119,7 @@ Python 3.11 ou mais novo (testado com 3.12).
 ```
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-teste.txt
-pytest tests                       # 61 passed
+pytest tests                       # 75 passed
 uvicorn app:app --port 8000        # abrir http://localhost:8000/docs
 ```
 
@@ -109,8 +141,9 @@ Para os dias de treino, trocar `WHERE is_teste` por `WHERE NOT is_teste` na cons
 | Regra contra o BigQuery, 39.822 dias de teste | 39.822 iguais (rodado também no Cloud Shell em 21/10/2026) |
 | Regra contra o BigQuery, 182.487 dias de treino | 182.487 iguais |
 | Os 222.309 dias (teste e treino) pela API | todas as respostas 200 e iguais ao BigQuery |
-| `pytest tests` | 61 passaram, no computador e no Cloud Shell |
+| `pytest tests` | 75 passaram (25/10/2026) |
 | Os 39.822 dias de teste pela API publicada no Cloud Run (`api-anomalia-perda`) | todas as respostas iguais ao BigQuery (21/10/2026) |
+| Versão com clima (revisão `api-anomalia-perda-00003-naw`), 26 dias conhecidos | 26 iguais ao BigQuery e 26 respostas válidas pelo contrato (25/10/2026) |
 | Código estragado de propósito (limiar 1% mais alto; sem dividir pelo raio) | 5 e 27 testes falharam, ou seja, os testes pegam o erro |
 
 ## Limites
@@ -123,13 +156,27 @@ Para os dias de treino, trocar `WHERE is_teste` por `WHERE NOT is_teste` na cons
 
 ## Para o Docker e o Cloud Run
 
-- O `Dockerfile` da pasta já foi testado: a imagem leva só `app.py`, `detector.py`,
+- O `Dockerfile` é o que está publicado: imagem `python:3.12-slim`, roda sem usuário
+  administrador e leva só `app.py`, `detector.py`, `contexto.py`,
   `modelo_anomalia_perda.json` e `requirements.txt`.
-- Publicar: `gcloud run deploy NOME --source . --region us-central1 --min-instances 0 --max-instances 1`.
-- Testar o serviço publicado (26 dias reais e 4 entradas erradas):
-  `TOKEN=$(gcloud auth print-identity-token) python testar_servico.py URL_DO_SERVICO`.
-  Resultado esperado: `RESULTADO: tudo certo`.
+- A conta do serviço, `api-inferencia@pdm-sistema-eletrico-2026.iam.gserviceaccount.com`,
+  precisa de `roles/bigquery.jobUser` no projeto e de leitura nos conjuntos
+  `sistema_eletrico_silver` e `sistema_eletrico_gold` (a view lê os dois). Sem isso a API
+  funciona, mas o clima volta `INDISPONIVEL`.
+- Publicar sem tirar o tráfego da versão atual, testar e só então passar o tráfego.
+  `bash deploy.sh` faz isso com as configurações do serviço publicado; os comandos
+  equivalentes, um a um:
+
+```
+gcloud run deploy api-anomalia-perda --source . --region us-central1 --no-traffic --tag teste
+python testar_servico.py https://teste---api-anomalia-perda-ag2ve5rgla-uc.a.run.app
+gcloud run services update-traffic api-anomalia-perda --region us-central1 --to-latest
+python testar_servico.py https://api-anomalia-perda-ag2ve5rgla-uc.a.run.app
+```
+
+  Resultado esperado: `RESULTADO: tudo certo`. Para voltar para a versão anterior:
+  `gcloud run services update-traffic api-anomalia-perda --region us-central1 --to-revisions NOME_DA_REVISAO=100`.
 - No Cloud Run o `/healthz` na raiz é reservado e não chega na API: use `/health`.
-- Para o Vertex AI Model Registry, o arquivo a registrar é o `modelo_anomalia_perda.json`.
+- Para o Vertex AI Model Registry, o modelo registrado é o `pdm-anomalia-perda`, versão 1.
   Um endpoint Vertex com o modelo do `EXPORT MODEL` devolve o grupo do `ML.PREDICT` e não
   diz se o dia é anômalo.

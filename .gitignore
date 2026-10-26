@@ -3,3 +3,5 @@ __pycache__/
 .env
 parquet_para_subir/
 dados/
+entrega2/streaming/snapshot_*.jsonl
+entrega2/streaming/checkpoint_*.json

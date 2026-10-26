@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "PDM - inferencia diaria de energia",
-    "version": "1.0.1",
-    "description": "Contrato; servico ainda nao implantado. Endpoint autenticado por Cloud Run IAM."
+    "title": "PDM - API de anomalias de perda (api-anomalia-perda)",
+    "version": "1.1.0",
+    "description": "Servico no ar no Cloud Run, us-central1, acesso publico. Recebe as sete features diarias da Gold e devolve grupo, distancia normalizada e is_anomaly, mais o clima do dia (contexto_inmet) quando o pedido traz id_ons e dia."
   },
   "paths": {
     "/v1/predict": {
@@ -21,7 +21,7 @@
         },
         "responses": {
           "200": {
-            "description": "Inferencia real, com contexto meteorologico separado",
+            "description": "Previsao do modelo, com o clima do dia separado (o clima nao entra no modelo)",
             "content": {
               "application/json": {
                 "schema": {
@@ -34,46 +34,69 @@
             "description": "Entrada invalida"
           },
           "503": {
-            "description": "Dependencia ou detector nao pronto"
+            "description": "Arquivo do modelo nao carregou. Falha do BigQuery nao gera 503: a previsao sai com contexto_inmet.status = INDISPONIVEL"
           },
           "400": {
             "description": "JSON malformado"
           },
-          "401": {
-            "description": "Sem identidade valida (IAM)"
-          },
-          "403": {
-            "description": "Sem permissao (IAM)"
-          },
-          "404": {
-            "description": "id/dia fora da Gold Nordeste"
+          "413": {
+            "description": "Corpo maior que 16 KB"
           }
         }
       }
     },
-    "/healthz": {
+    "/predict": {
+      "post": {
+        "operationId": "predictDailyAlias",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./predict_request.schema.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Previsao do modelo, com o clima do dia separado (o clima nao entra no modelo)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./predict_response.schema.json"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Entrada invalida"
+          },
+          "503": {
+            "description": "Arquivo do modelo nao carregou. Falha do BigQuery nao gera 503: a previsao sai com contexto_inmet.status = INDISPONIVEL"
+          },
+          "400": {
+            "description": "JSON malformado"
+          },
+          "413": {
+            "description": "Corpo maior que 16 KB"
+          }
+        }
+      }
+    },
+    "/health": {
       "get": {
         "responses": {
           "200": {
-            "description": "Processo ativo; nao comprova prontidao do modelo"
+            "description": "status ok quando o arquivo do modelo carregou; sem_modelo quando nao carregou"
           }
         }
       }
     }
   },
-  "components": {
-    "securitySchemes": {
-      "iamIdentityToken": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "Token de identidade Google aceito pelo Cloud Run IAM."
-      }
-    }
-  },
-  "security": [
+  "servers": [
     {
-      "iamIdentityToken": []
+      "url": "https://api-anomalia-perda-ag2ve5rgla-uc.a.run.app"
     }
   ]
 }

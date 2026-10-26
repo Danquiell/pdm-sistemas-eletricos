@@ -54,6 +54,18 @@ for c in CASOS:
 print(f"dias conhecidos iguais ao BigQuery: {iguais} de {len(CASOS)}")
 falhas += iguais != len(CASOS)
 
+# clima do dia: CONJ. CAJU (RN) em 17/08/2026 tem a estação A372 na view de clima + energia
+caju = {"id_ons": "CJU_RNCAJ1", "dia": "2026-08-17", "features": {
+    "tipo_usina": "EOLIELETRICA", "mwh_gerado": 2341.861, "mwh_perdido": 10108.501,
+    "pct_perda": 81.19, "pct_horas_restricao": 100.0, "fator_capacidade": 0.1423,
+    "mw_disponibilidade_media": 685.8}}
+status, r = chamar("/predict", caju)
+clima = r.get("contexto_inmet", {})
+print(f"clima do CONJ. CAJU 17/08: {status} {clima.get('status')} estação {clima.get('codigo_estacao')} "
+      f"vento {clima.get('vento_medio_ms')}")
+falhas += (status != 200 or clima.get("status") != "APTO_PARA_CONTEXTO"
+           or clima.get("codigo_estacao") != "A372" or r["predicao"]["is_anomaly"] is not True)
+
 # dados errados: a API tem que recusar com 422
 base = CASOS[0]["features"]
 errados = {

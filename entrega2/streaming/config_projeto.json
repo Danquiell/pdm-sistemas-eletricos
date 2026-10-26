@@ -1,6 +1,6 @@
 {
-  "contract_version": "1.0.1",
-  "data_revisao": "2026-10-18",
+  "contract_version": "1.1.0",
+  "data_revisao": "2026-10-25",
   "project_id": "pdm-sistema-eletrico-2026",
   "region_servicos": "us-central1",
   "bigquery_location": "US",
@@ -84,25 +84,26 @@
     "contamination": 0.02,
     "vertex_model_id": "pdm-anomalia-perda",
     "vertex_endpoint_display_name": "pdm-anomalia-perda-endpoint",
-    "gating": "Endpoint Vertex obrigatorio para agrupamento; ML.DETECT_ANOMALIES no BigQuery, mesmo modelo e sete features, para normalized_distance e is_anomaly. Comparar centroide do endpoint e da funcao SQL e versionar o mapeamento se necessario.",
+    "gating": "A API no Cloud Run aplica o modelo do BigQuery ML a partir dos parametros exportados (modelo_anomalia_perda.json) e devolve centroid_id, normalized_distance e is_anomaly iguais ao ML.DETECT_ANOMALIES. O Vertex AI guarda o registro e a versao do modelo. O endpoint Vertex foi testado e devolve so o grupo mais proximo (nearest_centroid_id, igual ao ML.PREDICT), sem dizer se o dia e anomalo; fica sem modelo implantado para nao cobrar por hora.",
     "clima_como_feature": false,
-    "serving": "VERTEX_AI_ENDPOINT_E_BIGQUERY_ML"
+    "serving": "CLOUD_RUN_ARTEFATO_BQML"
   },
   "api": {
-    "cloud_run_service": "pdm-inferencia-energia",
+    "cloud_run_service": "api-anomalia-perda",
     "predict_path": "/v1/predict",
-    "health_path": "/healthz",
-    "authentication": "Cloud Run IAM; cliente envia token de identidade",
-    "input": "Sete features diarias copiadas da Gold existente, sem recalcular ou reescalar; id_ons e dia sao metadados.",
-    "contexto": "LEFT JOIN por id_ons, dia e replay_run_id; contexto incompleto nao impede inferencia valida.",
+    "health_path": "/health",
+    "authentication": "Publico (allUsers com roles/run.invoker). /healthz na raiz e reservado pelo Cloud Run e nao chega na API.",
+    "input": "Sete features diarias copiadas da Gold existente, sem recalcular ou reescalar. id_ons, dia, replay_run_id, request_id e schema_version sao opcionais.",
+    "contexto": "Busca na view gold_contexto por replay_run_id, id_ons e dia (replay_run_id padrao: demo_20261018_01). Contexto ausente nao impede a inferencia: status SEM_IDENTIFICACAO sem id_ons/dia, FORA_DO_RECORTE fora do Nordeste de 1 a 19/08/2026, INDISPONIVEL se o BigQuery falhar.",
     "errors": {
       "400": "JSON malformado",
-      "401/403": "Autenticacao/autorizacao IAM",
-      "404": "id/dia nao existe no recorte Gold Nordeste",
-      "422": "Schema, datas, features invalidas ou fora do contrato",
-      "503": "Endpoint Vertex, detector BigQuery ou dependencia necessaria indisponivel; sem fallback somente SQL nem resposta simulada."
+      "413": "Corpo maior que 16 KB",
+      "422": "Schema, datas, features invalidas ou fora do contrato, pct_perda incoerente com as energias",
+      "503": "Arquivo do modelo nao carregou; sem resposta simulada."
     },
-    "schema_version": "1.0.1"
+    "schema_version": "1.1.0",
+    "url": "https://api-anomalia-perda-ag2ve5rgla-uc.a.run.app",
+    "predict_alias": "/predict"
   },
   "event_schema_version": "1.0.0"
 }
